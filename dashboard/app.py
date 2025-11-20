@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+
 import streamlit as st
 
 # Add parent directory to path for imports
@@ -14,11 +15,12 @@ st.set_page_config(
     page_title="DLP Policy Simulation Platform",
     page_icon="🛡️",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
 )
 
 # Custom CSS
-st.markdown("""
+st.markdown(
+    """
 <style>
     .main-header {
         font-size: 2.5rem;
@@ -64,33 +66,41 @@ st.markdown("""
         margin: 1rem 0;
     }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # Initialize session state
-if 'dlp_engine' not in st.session_state:
+if "dlp_engine" not in st.session_state:
     st.session_state.dlp_engine = DLPEngine()
 
-if 'audit_logger' not in st.session_state:
+if "audit_logger" not in st.session_state:
     st.session_state.audit_logger = AuditLogger()
 
-if 'reporter' not in st.session_state:
+if "reporter" not in st.session_state:
     st.session_state.reporter = DLPReporter()
 
 # Header
-st.markdown('<div class="main-header">🛡️ Data Loss Prevention (DLP) Policy Simulation Platform</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-header">Enterprise-grade DLP testing and compliance validation for Australian data protection</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="main-header">🛡️ Data Loss Prevention (DLP) Policy Simulation Platform</div>',
+    unsafe_allow_html=True,
+)
+st.markdown(
+    '<div class="sub-header">Enterprise-grade DLP testing and compliance validation for Australian data protection</div>',
+    unsafe_allow_html=True,
+)
 
 # Sidebar
 with st.sidebar:
     st.header("⚙️ Configuration")
-    
+
     simulation_mode = st.selectbox(
         "Select Simulation Mode",
-        ["Text Analysis", "Email Simulation", "File Upload", "Chat Message"]
+        ["Text Analysis", "Email Simulation", "File Upload", "Chat Message"],
     )
-    
+
     st.divider()
-    
+
     st.header("📋 Loaded Policies")
     for idx, policy in enumerate(st.session_state.dlp_engine.policies, 1):
         with st.expander(f"{idx}. {policy['name']}"):
@@ -104,111 +114,138 @@ col1, col2 = st.columns([1, 1])
 
 with col1:
     st.header("📥 Input")
-    
+
     if simulation_mode == "Text Analysis":
         text_input = st.text_area(
             "Enter text to analyze",
             height=300,
-            placeholder="Paste content here (e.g., emails, documents, chat messages)..."
+            placeholder="Paste content here (e.g., emails, documents, chat messages)...",
         )
         channel = st.selectbox("Channel", ["email", "chat", "file"])
-        
+
         if st.button("🔍 Analyze", type="primary", use_container_width=True):
             if text_input:
                 result = st.session_state.dlp_engine.evaluate(text_input, channel)
                 st.session_state.last_result = result
                 st.session_state.audit_logger.log_dlp_result(result, channel)
-                st.session_state.reporter.add_event({
-                    "timestamp": st.session_state.audit_logger.log_dlp_result(result, channel).get("timestamp"),
-                    "channel": channel,
-                    "classification": result.get("classification"),
-                    "policy_triggered": result.get("policy_triggered"),
-                    "action_taken": result.get("action_taken"),
-                    "metadata": {"matches": list(result.get("matches", {}).keys())}
-                })
+                st.session_state.reporter.add_event(
+                    {
+                        "timestamp": st.session_state.audit_logger.log_dlp_result(
+                            result, channel
+                        ).get("timestamp"),
+                        "channel": channel,
+                        "classification": result.get("classification"),
+                        "policy_triggered": result.get("policy_triggered"),
+                        "action_taken": result.get("action_taken"),
+                        "metadata": {"matches": list(result.get("matches", {}).keys())},
+                    }
+                )
             else:
                 st.warning("Please enter some text to analyze.")
-    
+
     elif simulation_mode == "Email Simulation":
         sender = st.text_input("From", placeholder="sender@example.com")
         recipient = st.text_input("To", placeholder="recipient@example.com")
         subject = st.text_input("Subject", placeholder="Email subject")
         body = st.text_area("Body", height=200, placeholder="Email body content...")
-        
+
         if st.button("📧 Send Email (Simulate)", type="primary", use_container_width=True):
             if sender and recipient and subject and body:
                 full_content = f"{subject}\n{body}"
                 result = st.session_state.dlp_engine.evaluate(full_content, "email")
                 st.session_state.last_result = result
                 st.session_state.audit_logger.log_dlp_result(result, "email", user=sender)
-                st.session_state.reporter.add_event({
-                    "timestamp": st.session_state.audit_logger.log_dlp_result(result, "email", user=sender).get("timestamp"),
-                    "channel": "email",
-                    "classification": result.get("classification"),
-                    "policy_triggered": result.get("policy_triggered"),
-                    "action_taken": result.get("action_taken"),
-                    "metadata": {"matches": list(result.get("matches", {}).keys())}
-                })
+                st.session_state.reporter.add_event(
+                    {
+                        "timestamp": st.session_state.audit_logger.log_dlp_result(
+                            result, "email", user=sender
+                        ).get("timestamp"),
+                        "channel": "email",
+                        "classification": result.get("classification"),
+                        "policy_triggered": result.get("policy_triggered"),
+                        "action_taken": result.get("action_taken"),
+                        "metadata": {"matches": list(result.get("matches", {}).keys())},
+                    }
+                )
             else:
                 st.warning("Please fill in all email fields.")
-    
+
     elif simulation_mode == "File Upload":
         uploaded_file = st.file_uploader("Upload a text file", type=["txt", "csv", "log"])
-        
+
         if uploaded_file is not None:
             content = uploaded_file.read().decode("utf-8")
-            st.text_area("File Preview", content[:500] + "..." if len(content) > 500 else content, height=200)
-            
+            st.text_area(
+                "File Preview", content[:500] + "..." if len(content) > 500 else content, height=200
+            )
+
             if st.button("🔍 Scan File", type="primary", use_container_width=True):
                 result = st.session_state.dlp_engine.evaluate(content, "file")
                 st.session_state.last_result = result
                 st.session_state.audit_logger.log_dlp_result(result, "file")
-                st.session_state.reporter.add_event({
-                    "timestamp": st.session_state.audit_logger.log_dlp_result(result, "file").get("timestamp"),
-                    "channel": "file",
-                    "classification": result.get("classification"),
-                    "policy_triggered": result.get("policy_triggered"),
-                    "action_taken": result.get("action_taken"),
-                    "metadata": {"matches": list(result.get("matches", {}).keys())}
-                })
-    
+                st.session_state.reporter.add_event(
+                    {
+                        "timestamp": st.session_state.audit_logger.log_dlp_result(
+                            result, "file"
+                        ).get("timestamp"),
+                        "channel": "file",
+                        "classification": result.get("classification"),
+                        "policy_triggered": result.get("policy_triggered"),
+                        "action_taken": result.get("action_taken"),
+                        "metadata": {"matches": list(result.get("matches", {}).keys())},
+                    }
+                )
+
     elif simulation_mode == "Chat Message":
         sender = st.text_input("Sender", placeholder="user123")
         recipient = st.text_input("Recipient", placeholder="user456")
         message = st.text_area("Message", height=200, placeholder="Chat message content...")
-        
+
         if st.button("💬 Send Message (Simulate)", type="primary", use_container_width=True):
             if sender and recipient and message:
                 result = st.session_state.dlp_engine.evaluate(message, "chat")
                 st.session_state.last_result = result
                 st.session_state.audit_logger.log_dlp_result(result, "chat", user=sender)
-                st.session_state.reporter.add_event({
-                    "timestamp": st.session_state.audit_logger.log_dlp_result(result, "chat", user=sender).get("timestamp"),
-                    "channel": "chat",
-                    "classification": result.get("classification"),
-                    "policy_triggered": result.get("policy_triggered"),
-                    "action_taken": result.get("action_taken"),
-                    "metadata": {"matches": list(result.get("matches", {}).keys())}
-                })
+                st.session_state.reporter.add_event(
+                    {
+                        "timestamp": st.session_state.audit_logger.log_dlp_result(
+                            result, "chat", user=sender
+                        ).get("timestamp"),
+                        "channel": "chat",
+                        "classification": result.get("classification"),
+                        "policy_triggered": result.get("policy_triggered"),
+                        "action_taken": result.get("action_taken"),
+                        "metadata": {"matches": list(result.get("matches", {}).keys())},
+                    }
+                )
             else:
                 st.warning("Please fill in all fields.")
 
 with col2:
     st.header("📊 Results")
-    
-    if 'last_result' in st.session_state:
+
+    if "last_result" in st.session_state:
         result = st.session_state.last_result
-        
+
         # Classification
         classification = result.get("classification", "Unknown")
-        
+
         if classification == "Highly Sensitive":
-            st.markdown(f'<div class="danger-box"><strong>🔴 Classification:</strong> {classification}</div>', unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="danger-box"><strong>🔴 Classification:</strong> {classification}</div>',
+                unsafe_allow_html=True,
+            )
         elif classification == "Restricted":
-            st.markdown(f'<div class="warning-box"><strong>🟡 Classification:</strong> {classification}</div>', unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="warning-box"><strong>🟡 Classification:</strong> {classification}</div>',
+                unsafe_allow_html=True,
+            )
         else:
-            st.markdown(f'<div class="success-box"><strong>🟢 Classification:</strong> {classification}</div>', unsafe_allow_html=True)
-        
+            st.markdown(
+                f'<div class="success-box"><strong>🟢 Classification:</strong> {classification}</div>',
+                unsafe_allow_html=True,
+            )
+
         # Matches
         st.subheader("🎯 Detected PII/Sensitive Data")
         matches = result.get("matches", {})
@@ -220,24 +257,24 @@ with col2:
                         st.code(val)
         else:
             st.info("No sensitive data detected.")
-        
+
         # Policy
         st.subheader("⚖️ Policy Decision")
         policy = result.get("policy_triggered")
         action = result.get("action_taken", "allow")
-        
+
         if policy:
             st.write(f"**Policy Triggered:** `{policy}`")
         else:
             st.write("**Policy Triggered:** None (No violation)")
-        
+
         st.write(f"**Action Taken:** `{action.upper()}`")
-        
+
         # Action result
         action_result = result.get("action_result", {})
         if action_result:
             st.json(action_result)
-        
+
         # Processed content
         st.subheader("📄 Processed Content")
         processed = result.get("processed_content")
@@ -245,7 +282,7 @@ with col2:
             st.text_area("Output", processed, height=200)
         else:
             st.warning("Content was blocked or quarantined.")
-        
+
     else:
         st.info("👈 Submit content on the left to see DLP analysis results here.")
 
@@ -266,7 +303,7 @@ with col_b:
 with col_c:
     if st.button("🔄 Reset Session", use_container_width=True):
         st.session_state.reporter = DLPReporter()
-        if 'last_result' in st.session_state:
+        if "last_result" in st.session_state:
             del st.session_state.last_result
         st.success("Session reset!")
         st.rerun()
