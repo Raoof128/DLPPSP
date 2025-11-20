@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config:/app/config
+      - ./quarantine:/app/quarantine
+      - ./dlp_audit.log:/app/dlp_audit.log
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: uvicorn api.server:app --host 0.0.0.0 --port 8000 --reload
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./config:/app/config
+      - ./quarantine:/app/quarantine
+      - ./dlp_audit.log:/app/dlp_audit.log
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: streamlit run dashboard/app.py --server.port=8501 --server.address=0.0.0.0

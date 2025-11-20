@@ -1,0 +1,91 @@
+{
+  "generated_at": "2025-11-21T10:12:35.681791",
+  "total_events": 6,
+  "summary": {
+    "blocked": 3,
+    "quarantined": 0,
+    "redacted": 1,
+    "alerted": 1,
+    "allowed": 1
+  },
+  "events": [
+    {
+      "timestamp": "2025-11-21T10:00:00",
+      "channel": "email",
+      "classification": "Highly Sensitive",
+      "policy_triggered": "block_tfn_external",
+      "action_taken": "block",
+      "metadata": {
+        "matches": [
+          "TFN",
+          "ACN"
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-11-21T10:01:00",
+      "channel": "email",
+      "classification": "Highly Sensitive",
+      "policy_triggered": "redact_credit_cards",
+      "action_taken": "redact",
+      "metadata": {
+        "matches": [
+          "CreditCard"
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-11-21T10:02:00",
+      "channel": "chat",
+      "classification": "Internal",
+      "policy_triggered": "alert_medical_terms",
+      "action_taken": "alert",
+      "metadata": {
+        "matches": [
+          "Medical_Terms"
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-11-21T10:03:00",
+      "channel": "file",
+      "classification": "Highly Sensitive",
+      "policy_triggered": "block_tfn_external",
+      "action_taken": "block",
+      "metadata": {
+        "matches": [
+          "TFN",
+          "ABN",
+          "ACN",
+          "Financial_Terms"
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-11-21T10:04:00",
+      "channel": "email",
+      "classification": "Public",
+      "policy_triggered": null,
+      "action_taken": "allow",
+      "metadata": {
+        "matches": []
+      }
+    },
+    {
+      "timestamp": "2025-11-21T10:05:00",
+      "channel": "email",
+      "classification": "Highly Sensitive",
+      "policy_triggered": "block_tfn_external",
+      "action_taken": "block",
+      "metadata": {
+        "matches": [
+          "TFN",
+          "Medicare",
+          "ACN",
+          "Mobile",
+          "Email"
+        ]
+      }
+    }
+  ]
+}

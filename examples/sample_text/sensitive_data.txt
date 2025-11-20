@@ -1,0 +1,13 @@
+Hi, my name is John Smith and my TFN is 123 456 789.
+I need to pay my medical bills using Medicare number 2123456789.
+Please contact me at 0412 345 678.
+
+My company ABN is 12 345 678 901 and ACN is 123 456 789.
+The invoice details are attached, please pay via bank account BSB 062-000, Account 12345678.
+
+Credit card for payment: 4532 1234 5678 9010
+
+Diagnosis: The patient was diagnosed with acute bronchitis and prescribed medication.
+Treatment plan includes clinical assessment and pathology tests.
+
+This is confidential salary information for the audit.

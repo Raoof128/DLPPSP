@@ -1,0 +1,28 @@
+policies:
+  - name: block_tfn_external
+    description: "Block any transmission of Tax File Numbers via external channels"
+    match: ["TFN"]
+    channel: ["email", "chat", "file"]
+    action: "block"
+    severity: "high"
+
+  - name: redact_credit_cards
+    description: "Redact Credit Card numbers in all communications"
+    match: ["CreditCard"]
+    channel: ["email", "file", "chat"]
+    action: "redact"
+    severity: "medium"
+
+  - name: alert_medical_terms
+    description: "Log and alert on sharing of medical terminology"
+    match: ["Medical_Terms", "Medicare"]
+    channel: ["email", "chat"]
+    action: "alert"
+    severity: "low"
+
+  - name: quarantine_financial_docs
+    description: "Quarantine files containing significant financial data"
+    match: ["ABN", "ACN", "Financial_Terms"]
+    channel: ["file"]
+    action: "quarantine"
+    severity: "medium"

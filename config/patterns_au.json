@@ -1,0 +1,11 @@
+{
+    "TFN": "\\b\\d{3}\\s?\\d{3}\\s?\\d{3}\\b",
+    "Medicare": "\\b[2-6]\\d{9}\\b",
+    "ABN": "\\b\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}\\b",
+    "ACN": "\\b\\d{3}\\s?\\d{3}\\s?\\d{3}\\b",
+    "CreditCard": "\\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|6(?:011|5[0-9]{2})[0-9]{12}|(?:2131|1800|35\\d{3})\\d{11})\\b",
+    "Mobile": "\\b04\\d{2}\\s?\\d{3}\\s?\\d{3}\\b",
+    "Email": "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b",
+    "Medical_Terms": "(?i)\\b(diagnosis|prognosis|prescription|patient|hospital|treatment|medication|clinical|pathology|oncology)\\b",
+    "Financial_Terms": "(?i)\\b(salary|invoice|bank account|bsb|swift|ledger|payroll|tax return|audit)\\b"
+}
