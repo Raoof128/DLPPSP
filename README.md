@@ -78,6 +78,15 @@ graph TB
 | **Audit System** | Python Logging | Compliance-grade event logs |
 | **Reporting** | Markdown + JSON | Multi-format report generation |
 
+## 📚 Documentation
+
+- [Architecture Overview](docs/ARCHITECTURE.md)
+- [API Reference](docs/API_REFERENCE.md)
+- [File Structure](FILE_STRUCTURE.md)
+- [Quickstart Guide](QUICKSTART.md)
+- [Security Policy](SECURITY.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+
 ---
 
 ## 🔍 Detection Capabilities
@@ -150,6 +159,9 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
+
+# (Optional) install development tools
+pip install -r requirements-dev.txt
 ```
 
 ### Running Locally
@@ -180,6 +192,14 @@ docker-compose up --build
 Services:
 - **Dashboard**: `http://localhost:8501`
 - **API**: `http://localhost:8000`
+
+### Configuration
+
+The FastAPI service reads paths for policies and regex patterns from environment variables so you can mount alternate configs wi
+thout rebuilding:
+
+- `DLP_POLICIES_PATH` (default: `config/policies.yaml`)
+- `DLP_PATTERNS_PATH` (default: `config/patterns_au.json`)
 
 ---
 
@@ -227,14 +247,18 @@ curl -X POST "http://localhost:8000/simulate/email" \
 }
 ```
 
-### 3. Running Tests
+### 3. Running Tests & Quality Checks
 
 ```bash
-# Run all tests
-python -m unittest discover tests
+# Run tests
+pytest
 
-# Run specific test
-python -m unittest tests.test_rules
+# Ruff linting
+ruff check .
+
+# Formatting verification
+black --check .
+isort --check-only .
 ```
 
 ---
